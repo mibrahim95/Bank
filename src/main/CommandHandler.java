@@ -2,15 +2,11 @@ package main;
 
 public class CommandHandler {
 
-	
-	public void createCommand(final String [] commands) {
+	private Validator validator = new Validator();
+
+	public void processCommand(final String command) {
+		validator.isValidCommands(command);
 		
 	}
 	
-	public void depositCommand(final String [] commands) {
-		
-	}
-	public void withdrawCommand(final String [] commands) {
-		
-	}
 }

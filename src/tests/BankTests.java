@@ -8,11 +8,11 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import main.Bank;
 
 public class BankTests {
 	private Bank testBank = new Bank();
+
 	@BeforeEach
 	public void setUp() {
 		testBank.createAccount("checking", "mojahed");
@@ -21,9 +21,9 @@ public class BankTests {
 	@Test
 	public void test_createAccount_invalidAccountType() {
 		testBank.createAccount("nonsense", "xyz");
-		assertEquals(1,testBank.getAccounts().size());
+		assertEquals(1, testBank.getAccounts().size());
 	}
-	
+
 	@Test
 	public void test_createAccount_isValidChecking() {
 		assertFalse(testBank.getAccounts().isEmpty());
@@ -44,13 +44,12 @@ public class BankTests {
 		testBank.deposit(testBank.getAccounts().get(0).getId(), 100);
 		assertEquals(100, testBank.getAccounts().get(0).getBalance().intValue());
 	}
-	
+
 	@Test
 	public void test_deposit_withInvalidAmount() {
 		testBank.deposit(testBank.getAccounts().get(0).getId(), -100);
 		assertEquals(0, testBank.getAccounts().get(0).getBalance().intValue());
 	}
-
 
 	@Test
 	public void test_deposit_withInvalidAccount() {
@@ -80,7 +79,7 @@ public class BankTests {
 		testBank.withdraw(testBank.getAccounts().get(0).getId(), -20);
 		assertEquals(100, testBank.getAccounts().get(0).getBalance().intValue());
 	}
-	
+
 	@Test
 	public void test_Withdraw_withInvalidAccount() {
 		testBank.deposit(testBank.getAccounts().get(0).getId(), 100);

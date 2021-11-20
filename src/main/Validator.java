@@ -1,82 +1,48 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Validator {
 
-	private List<BankAccount> accounts = new ArrayList<>();
+	private Bank bankToValidate = new Bank();
 
-	public boolean checkValidAccountType(final String type) {
+	public boolean isValidCommands(final String command) {
+		String[] commandsGiven = command.split(" ");
+
+		if (commandsGiven[0].equalsIgnoreCase("create")) {
+			return this.isValidAccountType(commandsGiven[1]);
+
+		} else if (commandsGiven[0].equalsIgnoreCase("deposit")) {
+			return this.isValidAccountAndAmount(commandsGiven);
+
+		} else if (commandsGiven[0].equalsIgnoreCase("withdraw")) {
+			return this.isValidAccountAndAmount(commandsGiven);
+
+		}
+		return false;
+	}
+
+	private boolean isValidAccountType(final String type) {
 		List<String> validAccounts = Arrays.asList("checking", "savings", "cd");
-
-		if (validAccounts.contains(type)) {
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean checkValidAccountId(final String id) {
-		if(accounts.contains(id)) {
-			return true;
-		}
-		return false;
-		
-	}
-	
-	public boolean checkValidAmount(final String amount) {
-		if(Integer.parseInt(amount) > 0) {
-			return true;
-		}
-		return false;
-		
+		return validAccounts.contains(type);
 	}
 
-	public boolean validateCommandsGiven(final String command) {
-		String[] commandsGiven = new String[0];
-
-		if (command != "") {
-			commandsGiven = command.split(" ");
-			if (commandsGiven[0] == "create") {
-				return createCheck(commandsGiven);
-
-			} else if (commandsGiven[0] == "deposit") {
-				return depositeCheck(commandsGiven);
-
-			} else if (commandsGiven[0] == "withdraw") {
-				return withdrawCheck(commandsGiven);
-
-			}
-		}
-		return false;
+	private boolean isValidAccountId(final int id) {
+		return bankToValidate.getAccounts().stream().anyMatch(account -> account.getId() == id);
 	}
 
-	public boolean createCheck(final String[] commands) {
-		// only checking if second command is the account type
-		if(this.checkValidAccountType(commands[1])) {
-			return true;
+	private boolean isValidAmount(final double amount) {
+		return amount > 0;
+
+	}
+
+	private boolean isValidAccountAndAmount(final String[] commands) {
+		if (this.isValidAccountId(Integer.parseInt(commands[1]))) {
+			return this.isValidAmount(Double.parseDouble(commands[2]));
 		}
 		return false;
 
 	}
 
-	public boolean depositeCheck(final String[] commands) {
-		if(this.checkValidAccountId(commands[1])) {
-			if(this.checkValidAmount(commands[2])) {
-				return true;
-			}
-		}
-		return false;
-
-	}
-
-	public boolean withdrawCheck(final String[] commands) {
-		if(this.checkValidAccountId(commands[1])) {
-			if(this.checkValidAmount(commands[2])) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

@@ -6,12 +6,9 @@ import java.util.List;
 public class Bank {
 
 	private List<BankAccount> accounts = new ArrayList<>();
-	private Validator validator = new Validator();
 
 	public void createAccount(final String accountType, final String name) {
-		if(validator.checkValidAccountType(accountType)) {
-			accounts.add(new BankAccount(accountType, name));
-		}
+		accounts.add(new BankAccount(accountType, name));
 	}
 
 	public List<BankAccount> getAccounts() {
