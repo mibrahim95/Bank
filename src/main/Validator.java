@@ -5,18 +5,18 @@ import java.util.List;
 
 public class Validator {
 
-	private Bank bankToValidate = new Bank();
+	private Bank bankToValidate;
+	
+	Validator(final Bank bankToValidate){
+		this.bankToValidate = bankToValidate;
+	}
 
-	public boolean isValidCommands(final String command) {
+	public boolean isValidCommand(final String command) {
 		String[] commandsGiven = command.split(" ");
-
 		if (commandsGiven[0].equalsIgnoreCase("create")) {
 			return this.isValidAccountType(commandsGiven[1]);
 
-		} else if (commandsGiven[0].equalsIgnoreCase("deposit")) {
-			return this.isValidAccountAndAmount(commandsGiven);
-
-		} else if (commandsGiven[0].equalsIgnoreCase("withdraw")) {
+		} else if (commandsGiven[0].equalsIgnoreCase("deposit") || commandsGiven[0].equalsIgnoreCase("withdraw")) {
 			return this.isValidAccountAndAmount(commandsGiven);
 
 		}
@@ -29,7 +29,7 @@ public class Validator {
 	}
 
 	private boolean isValidAccountId(final int id) {
-		return bankToValidate.getAccounts().stream().anyMatch(account -> account.getId() == id);
+		return this.bankToValidate.getAccounts().stream().anyMatch(account -> account.getId() == id);
 	}
 
 	private boolean isValidAmount(final double amount) {
@@ -38,8 +38,8 @@ public class Validator {
 	}
 
 	private boolean isValidAccountAndAmount(final String[] commands) {
-		if (this.isValidAccountId(Integer.parseInt(commands[1]))) {
-			return this.isValidAmount(Double.parseDouble(commands[2]));
+		if (this.isValidAccountId(Integer.parseInt(commands[2]))) {
+			return this.isValidAmount(Double.parseDouble(commands[1]));
 		}
 		return false;
 
