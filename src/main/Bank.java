@@ -6,9 +6,12 @@ import java.util.List;
 public class Bank {
 
 	private List<BankAccount> accounts = new ArrayList<>();
+	private Validator validator = new Validator(accounts);
 
 	public void createAccount(final String accountType, final String name) {
-		accounts.add(new BankAccount(accountType, name));
+		if (validator.isValidAccountType(accountType)) {
+			accounts.add(new BankAccount(accountType, name));
+		}
 	}
 
 	public List<BankAccount> getAccounts() {
@@ -16,8 +19,8 @@ public class Bank {
 	}
 
 	public void deposit(final int id, final double amount) {
-		if (amount > 0) {
-			BankAccount currentAccount = this.getCurrentBankAccount(id, accounts);
+		if (validator.isValidAmount(amount)) {
+			BankAccount currentAccount = this.getAccountById(id, accounts);
 
 			if (currentAccount != null) {
 				currentAccount.setBalance(this.getOriginalBalance(currentAccount) + amount);
@@ -26,8 +29,8 @@ public class Bank {
 	}
 
 //	
-	public void withdraw(final int id, final double amount) {
-		BankAccount currentAccount = this.getCurrentBankAccount(id, accounts);
+	public boolean withdraw(final int id, final double amount) {
+		BankAccount currentAccount = this.getAccountById(id, accounts);
 
 		if (currentAccount != null) {
 			double orgBalance = this.getOriginalBalance(currentAccount);
@@ -37,17 +40,14 @@ public class Bank {
 			} else if (amount > 0 && amount > orgBalance) { // left this way to avoid someone withdrawing -25$
 				currentAccount.setBalance(0.00);
 			}
+			return true;
 		}
+		return false;
 	}
 
-	private BankAccount getCurrentBankAccount(final int id, final List<BankAccount> accounts) {
-		BankAccount currentAccount = null;
-		for (int i = 0; i < accounts.size(); i++) {
-			if (accounts.get(i).getId() == id) {
-				currentAccount = accounts.get(i);
-			}
-		}
-		return currentAccount;
+	private BankAccount getAccountById(final int id, final List<BankAccount> accounts) {
+		return accounts.stream().filter(account -> account.getId() == id).findFirst().orElse(null);
+
 	}
 
 	private double getOriginalBalance(final BankAccount bankAccount) {

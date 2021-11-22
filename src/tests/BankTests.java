@@ -83,7 +83,7 @@ public class BankTests {
 	@Test
 	public void test_Withdraw_withInvalidAccount() {
 		testBank.deposit(testBank.getAccounts().get(0).getId(), 100);
-		testBank.withdraw(77777, 30);
+		assertFalse(testBank.withdraw(77777, 30));
 		assertEquals(100, testBank.getAccounts().get(0).getBalance().intValue());
 	}
 

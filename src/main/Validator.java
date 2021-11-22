@@ -5,56 +5,61 @@ import java.util.List;
 
 public class Validator {
 
-	private Bank bankToValidate;
+	private List<BankAccount> accounts;
 
-	Validator(final Bank bankToValidate) {
-		this.bankToValidate = bankToValidate;
+	Validator(List<BankAccount> accounts) {
+		this.accounts = accounts;
+
 	}
 
 	public boolean isValidCommand(final String command) {
-		try {
-			String[] commandsGiven = command.split(" ");
-			if (commandsGiven[0].equalsIgnoreCase("create")) {
-				return this.isValidAccountType(commandsGiven[1]);
+		String[] commandsGiven = command.split(" ");
+		String action = this.getFromArray(commandsGiven, 0);
 
-			} else if (commandsGiven[0].equalsIgnoreCase("deposit") || commandsGiven[0].equalsIgnoreCase("withdraw")) {
-				return this.isValidAccountAndAmount(commandsGiven);
-
+		if (action.equalsIgnoreCase("create")) {
+			String type = this.getFromArray(commandsGiven, 1);
+			String name = this.getFromArray(commandsGiven, 2);
+			if (!type.isEmpty() && !name.isEmpty()) {
+				return this.isValidAccountType(type);
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("Cannot validate an incomplete command");
-		} catch(Exception e) {
-			System.out.println("Failed validation fix your command");
+
+		} else if (action.equalsIgnoreCase("deposit") || action.equalsIgnoreCase("withdraw")) {
+			String amount = this.getFromArray(commandsGiven, 1);
+			String id = this.getFromArray(commandsGiven, 2);
+			if (!id.isEmpty() && !amount.isEmpty()) {
+			return this.isValidAccountAndAmount(id, amount);
+			}
 		}
 		return false;
 	}
 
-	private boolean isValidAccountType(final String type) {
+	public boolean isValidAccountType(final String type) {
 		List<String> validAccounts = Arrays.asList("checking", "savings", "cd");
 		return validAccounts.contains(type);
 	}
 
-	private boolean isValidAccountId(final int id) {
-		return this.bankToValidate.getAccounts().stream().anyMatch(account -> account.getId() == id);
+	public boolean isValidAccountId(final int id) {
+		return this.accounts.stream().anyMatch(account -> account.getId() == id);
 	}
 
-	private boolean isValidAmount(final double amount) {
+	public boolean isValidAmount(final double amount) {
 		return amount > 0;
 
 	}
 
-	private boolean isValidAccountAndAmount(final String[] commands) {
-		try {
-			if (this.isValidAccountId(Integer.parseInt(commands[2]))) {
-				return this.isValidAmount(Double.parseDouble(commands[1]));
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("Please enter a valid integer ID and Double amount");
-		} catch (Exception e) {
-			System.out.println("Something else went wrong");
+	public boolean isValidAccountAndAmount(final String id, final String amount) {
+		if (this.isValidAccountId(Integer.parseInt(id))) {
+			return this.isValidAmount(Double.parseDouble(amount));
 		}
 		return false;
-
 	}
 
+	private String getFromArray(String[] array, int index) {
+		try {
+			return array[index];
+		} catch (Exception e) {
+			return " ";
+		}
+
+	}
 }
