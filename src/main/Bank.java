@@ -8,32 +8,36 @@ public class Bank {
 	private List<BankAccount> accounts = new ArrayList<>();
 	private Validator validator = new Validator(accounts);
 
-	public void createAccount(final String accountType, final String name) {
+	public boolean createAccount(final String accountType, final String name) {
 		if (validator.isValidAccountType(accountType)) {
 			accounts.add(new BankAccount(accountType, name));
+			return true;
 		}
+		return false;
 	}
 
 	public List<BankAccount> getAccounts() {
 		return this.accounts;
 	}
 
-	public void deposit(final int id, final double amount) {
+	public boolean deposit(final int id, final double amount) {
 		if (validator.isValidAmount(amount)) {
 			BankAccount currentAccount = this.getAccountById(id, accounts);
 
 			if (currentAccount != null) {
-				currentAccount.setBalance(this.getOriginalBalance(currentAccount) + amount);
+				currentAccount.setBalance(currentAccount.getBalance() + amount);
+				return true;
 			}
 		}
+		return false;
 	}
 
-//	
 	public boolean withdraw(final int id, final double amount) {
 		BankAccount currentAccount = this.getAccountById(id, accounts);
 
-		if (currentAccount != null) {
-			double orgBalance = this.getOriginalBalance(currentAccount);
+		if (currentAccount != null && currentAccount.getType() == "checking") {
+
+			double orgBalance = currentAccount.getBalance();
 
 			if (amount > 0 && amount < orgBalance) {
 				currentAccount.setBalance(orgBalance - amount);
@@ -45,12 +49,8 @@ public class Bank {
 		return false;
 	}
 
-	private BankAccount getAccountById(final int id, final List<BankAccount> accounts) {
+	public BankAccount getAccountById(final int id, final List<BankAccount> accounts) {
 		return accounts.stream().filter(account -> account.getId() == id).findFirst().orElse(null);
 
-	}
-
-	private double getOriginalBalance(final BankAccount bankAccount) {
-		return bankAccount.getBalance();
 	}
 }
